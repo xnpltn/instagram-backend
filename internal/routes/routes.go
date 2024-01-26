@@ -2,8 +2,10 @@ package routes
 
 import (
 	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/xnpltn/codegram/internal/handlers"
+	"github.com/xnpltn/codegram/internal/middleware"
 )
 
 
@@ -13,6 +15,8 @@ func NewRouter() *mux.Router{
 	v1Router := mux.PathPrefix("/v1").Subrouter()
 	v1Router.HandleFunc("/", v1Handler)
 	v1Router.HandleFunc("/auth", handlers.AuthHandler)
+	v1Router.HandleFunc("/auth/signup", middleware.AuthMiddleware(handlers.HandlerCreateUser)).Methods("POST")
+	v1Router.HandleFunc("/auth/login", handlers.HandlerLoginUser)
 
 	return mux
 }
