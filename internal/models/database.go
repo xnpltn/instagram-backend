@@ -1,8 +1,8 @@
 package models
 
-import(
-	"log"
+import (
 	"database/sql"
+	"log"
 )
 
 func InitDB() (*sql.DB, error){
@@ -10,7 +10,7 @@ func InitDB() (*sql.DB, error){
 	if err != nil{
 		log.Fatal("Error Occured Connectiong to database", err)
 	}
-	stmt, err := db.Prepare(
+	_ , err = db.Exec(
 		`
 		CREATE TABLE IF NOT EXISTS users (
 			id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -20,17 +20,18 @@ func InitDB() (*sql.DB, error){
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		);
 		
+		CREATE TABLE IF NOT EXISTS posts (
+            id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+            user_id UUID REFERENCES users(id),
+            image_url VARCHAR(255),
+            description TEXT
+        );
 		`,
 	)
+
 	if err != nil{
 		log.Fatal("Error occured creating Tables", err)
 	}
 
-	res, err:= stmt.Exec()
-	if err != nil{
-		log.Fatal(err) 
-	}
-	log.Println(res)
-	log.Println("Database initiated succefull")
 	return db, nil
 }

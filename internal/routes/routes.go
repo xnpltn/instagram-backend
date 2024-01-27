@@ -13,10 +13,12 @@ func NewRouter() *mux.Router{
 	mux := mux.NewRouter()
 	mux.HandleFunc("/", testHomeHandler)
 	v1Router := mux.PathPrefix("/v1").Subrouter()
-	v1Router.HandleFunc("/", v1Handler)
+	v1Router.HandleFunc("", v1Handler)
 	v1Router.HandleFunc("/auth", handlers.AuthHandler)
-	v1Router.HandleFunc("/auth/signup", middleware.AuthMiddleware(handlers.HandlerCreateUser)).Methods("POST")
-	v1Router.HandleFunc("/auth/login", handlers.HandlerLoginUser)
+	v1Router.HandleFunc("/auth/signup", handlers.HandlerCreateUser).Methods("POST")
+	v1Router.HandleFunc("/auth/login", handlers.HandlerLoginUser).Methods("POST")
+	v1Router.HandleFunc("/posts", middleware.AuthMiddleware(handlers.CreatePosts)).Methods("POST")
+	v1Router.HandleFunc("/posts", middleware.AuthMiddleware(handlers.GetPosts)).Methods("GET")
 
 	return mux
 }

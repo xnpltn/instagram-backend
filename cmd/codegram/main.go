@@ -14,12 +14,11 @@ import (
 
 func main(){
 
-	db, err := models.InitDB()
+	_, err := models.InitDB()
 	if err != nil{
 		log.Fatal("failed to initialize db lol")
 	}
 
-	fmt.Println(db)
 	server := &http.Server{
 		Handler: routes.NewRouter(),
 		Addr: "localhost:9090",

@@ -35,6 +35,10 @@ func HandlerCreateUser(w http.ResponseWriter, r *http.Request){
 	if err != nil {
 		log.Fatal("Error initiating database", err)
 	}
+	params.Password, err = utils.HashPassword(params.Password)
+	if err != nil{
+		log.Fatal("error hashing password")
+	}
 	err = db.QueryRow(insertStmt, params.Name, params.Usename, params.Password).Scan(&params.ID, &params.Name, &params.Usename, &params.Password)
 	if err != nil{
 		log.Fatal("Errpr occured adding user to the database", err)
@@ -48,12 +52,12 @@ func HandlerCreateUser(w http.ResponseWriter, r *http.Request){
 	db.Close()
 }
 
-func HandlerLoginUser(w http.ResponseWriter, r *http.Request){
+func HandlerLoginUser(w http.ResponseWriter, r *http.Request,){
 	
 	getUserStmt := `
-	SELECT username, password FROM users WHERE username = $1;
+	SELECT id, username, name,  password FROM users WHERE username = $1;
 	`
-
+	user := models.DBUser{}
 	decoder := json.NewDecoder(r.Body)
 	params := models.LoginUserParams{}
 	databaseUser := models.LoginUserParams{}
@@ -67,14 +71,27 @@ func HandlerLoginUser(w http.ResponseWriter, r *http.Request){
 		utils.RespondWithError(w, 400, fmt.Sprintf("Error Persing JSON: %v", err))
 		return
 	}
-	err = db.QueryRow(getUserStmt, params.Usename).Scan(&databaseUser.Usename, &databaseUser.Password)
+	err = db.QueryRow(getUserStmt, params.Usename).Scan(&databaseUser.ID,&databaseUser.Usename, &user.Name, &databaseUser.Password)
 	if err !=nil{
 		log.Fatal("error signing in", err)
 	}
 
-	if databaseUser.Password != params.Password{
-		utils.RespondWithError(w, 404, "Invalid username or password")
-	}
 	
-	fmt.Println("database user",databaseUser)
+
+	
+	if !utils.CheckPasswordHash(params.Password, databaseUser.Password){
+		utils.RespondWithError(w, 401, "Invalid username or password")
+	}else{
+		
+		user.ID = databaseUser.ID
+		user.Usename = databaseUser.Usename
+		tokenSting, err := utils.GenerateJWT(user)
+		if err != nil{
+			log.Fatal("error occured", err)
+		}
+	
+		utils.RespondWithJson(w, 200, map[string]string{
+			"Token" : tokenSting,
+		})
+	}	
 }
