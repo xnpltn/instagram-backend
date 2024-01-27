@@ -18,7 +18,9 @@ func NewRouter() *mux.Router{
 	v1Router.HandleFunc("/auth/signup", handlers.HandlerCreateUser).Methods("POST")
 	v1Router.HandleFunc("/auth/login", handlers.HandlerLoginUser).Methods("POST")
 	v1Router.HandleFunc("/posts", middleware.AuthMiddleware(handlers.CreatePosts)).Methods("POST")
-	v1Router.HandleFunc("/posts", middleware.AuthMiddleware(handlers.GetPosts)).Methods("GET")
+	v1Router.HandleFunc("/posts", handlers.GetPosts).Methods("GET")
+	v1Router.HandleFunc("/posts/{postID}", handlers.GetPost).Methods("GET")
+	v1Router.HandleFunc("/posts/{postID}", middleware.AuthMiddleware(handlers.DeletePost)).Methods("DELETE")
 
 	return mux
 }
