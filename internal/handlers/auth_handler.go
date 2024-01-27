@@ -15,19 +15,16 @@ func AuthHandler(w http.ResponseWriter, _ *http.Request){
 
 
 
+
 func HandlerCreateUser(w http.ResponseWriter, r *http.Request){
 	insertStmt := `
 		INSERT INTO users (name, username, password)
 		VALUES ($1, $2, $3)
+		RETURNING id, name, username, password
 	`
-	type parameters struct{
-		Name string `json:"name"`
-		Usename string `json:"username"`
-		Password string `json:"password"`
-
-	}
+	
 	decoder := json.NewDecoder(r.Body)
-	params := parameters{}
+	params := models.CreateUserParams{}
 	error := decoder.Decode(&params)
 	if error != nil {
 		utils.RespondWithError(w, 400, fmt.Sprintf("Error Persing JSON: %v", error))
@@ -36,29 +33,48 @@ func HandlerCreateUser(w http.ResponseWriter, r *http.Request){
 	db, err := models.InitDB()
 	
 	if err != nil {
-		log.Fatal("Error initializing tadabase", err)
+		log.Fatal("Error initiating database", err)
 	}
-	_, errr := db.Exec(insertStmt, params.Name, params.Usename, params.Password)
-	if errr != nil{
-		log.Fatal("errpr occured adding user to the databse", errr)
+	err = db.QueryRow(insertStmt, params.Name, params.Usename, params.Password).Scan(&params.ID, &params.Name, &params.Usename, &params.Password)
+	if err != nil{
+		log.Fatal("Errpr occured adding user to the database", err)
 	}
-	utils.RespondWithJson(w, 201, params)
+	user := models.DBUser{
+		ID: params.ID,
+		Name: params.Name,
+		Usename: params.Usename,
+	}
+	utils.RespondWithJson(w, 201, user)
 	db.Close()
 }
 
 func HandlerLoginUser(w http.ResponseWriter, r *http.Request){
-	type parameters struct{
-		Usename string `json:"username"`
-		Password string `json:"password"`
+	
+	getUserStmt := `
+	SELECT username, password FROM users WHERE username = $1;
+	`
 
-	}
 	decoder := json.NewDecoder(r.Body)
-	params := parameters{}
-	error := decoder.Decode(&params)
-	if error != nil {
-		utils.RespondWithError(w, 400, fmt.Sprintf("Error Persing JSON: %v", error))
+	params := models.LoginUserParams{}
+	databaseUser := models.LoginUserParams{}
+	err := decoder.Decode(&params)
+	if err != nil {
+		utils.RespondWithError(w, 400, fmt.Sprintf("Error Persing JSON: %v", err))
 		return
 	}
+	db, err := models.InitDB()
+	if err != nil {
+		utils.RespondWithError(w, 400, fmt.Sprintf("Error Persing JSON: %v", err))
+		return
+	}
+	err = db.QueryRow(getUserStmt, params.Usename).Scan(&databaseUser.Usename, &databaseUser.Password)
+	if err !=nil{
+		log.Fatal("error signing in", err)
+	}
 
-	fmt.Println(params)
+	if databaseUser.Password != params.Password{
+		utils.RespondWithError(w, 404, "Invalid username or password")
+	}
+	
+	fmt.Println("database user",databaseUser)
 }
