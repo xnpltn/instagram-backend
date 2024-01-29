@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"github.com/xnpltn/codegram/internal/routes"
 	_ "github.com/lib/pq"
-	"github.com/xnpltn/codegram/internal/models"
 	"github.com/gorilla/handlers"
+	"github.com/xnpltn/codegram/internal/database"
 )
 
 
@@ -15,7 +15,7 @@ import (
 
 func main(){
 
-	_, err := models.InitDB()
+	_, err := database.Connect()
 	if err != nil{
 		log.Fatal("failed to initialize db lol")
 	}

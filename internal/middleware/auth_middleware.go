@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"github.com/xnpltn/codegram/internal/models"
 	"github.com/xnpltn/codegram/internal/utils"
@@ -17,13 +16,7 @@ func AuthMiddleware(handler authHandler) http.HandlerFunc{
 			utils.RespondWithError(w, 403, fmt.Sprintf("Auth error: %v", err))
 			return
 		}
-
 		user, err := utils.VerifyJWT(apiKey)
-		if err != nil{
-			log.Fatal("Error")
-		}
-		
-	
 		if err != nil{
 			utils.RespondWithError(w, 400, fmt.Sprintf("Cuuld not get user: %v", err))
 			return

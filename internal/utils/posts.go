@@ -28,7 +28,11 @@ func CreatePost(_ http.ResponseWriter, r *http.Request, db *sql.DB, user models.
 
 	imageDescription := r.FormValue("description")
 	defer file.Close()
-	tempfile, err := os.CreateTemp("uploads", "uplaod-*.jpg")
+	if err = os.MkdirAll("uploads/"+ user.Usename, 0775); os.IsExist(err){
+		fmt.Println("folder exists")
+	}
+	
+	tempfile, err := os.CreateTemp("uploads/"+ user.Usename +"/", "uplaod-*.jpg")
 	if err != nil{
 		fmt.Println("error occured", err)
 	}

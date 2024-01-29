@@ -6,10 +6,18 @@ import (
 	"github.com/xnpltn/codegram/internal/models"
 	"github.com/xnpltn/codegram/internal/utils"
 	"github.com/gorilla/mux"
+	"github.com/xnpltn/codegram/internal/database"
 )
 
-func CreatePosts(w http.ResponseWriter, r *http.Request, user models.DBUser){
-	db, err := models.InitDB()
+type Post struct{}
+
+func NewPost() *Post{
+	return &Post{}
+}
+
+
+func (p *Post) CreatePosts(w http.ResponseWriter, r *http.Request, user models.DBUser){
+	db, err := database.Connect()
 	if err != nil {
 		log.Fatal("Error initiating database", err)
 	}
@@ -22,8 +30,8 @@ func CreatePosts(w http.ResponseWriter, r *http.Request, user models.DBUser){
 	
 }
 
-func GetPosts(w http.ResponseWriter, _ *http.Request){
-	db, err := models.InitDB()
+func (p *Post) GetPosts(w http.ResponseWriter, _ *http.Request){
+	db, err := database.Connect()
 	if err != nil {
 		log.Fatal("Error initiating database", err)
 	}
@@ -36,8 +44,8 @@ func GetPosts(w http.ResponseWriter, _ *http.Request){
 	utils.RespondWithJson(w, 200, posts)
 }
 
-func GetPost(w http.ResponseWriter, r *http.Request, ){
-	db, err := models.InitDB()
+func (p *Post) GetPostByID(w http.ResponseWriter, r *http.Request, ){
+	db, err := database.Connect()
 	if err != nil {
 		log.Fatal("Error initiating database", err)
 	}
@@ -51,8 +59,8 @@ func GetPost(w http.ResponseWriter, r *http.Request, ){
 	utils.RespondWithJson(w, 200, post)
 }
 
-func DeletePost(w http.ResponseWriter, r *http.Request, user models.DBUser){
-	db, err := models.InitDB()
+func (p *Post) DeletePostByID(w http.ResponseWriter, r *http.Request, user models.DBUser){
+	db, err := database.Connect()
 	if err != nil {
 		log.Fatal("Error initiating database", err)
 	}
