@@ -36,6 +36,7 @@ func CreatePost(r *http.Request, db *sql.DB, user models.DBUser) (models.DBPost,
 	if err != nil{
 		fmt.Println("error occured", err)
 	}
+	defer tempfile.Close()
 	fileBytes, err := io.ReadAll(file)
 	if err != nil{
 		fmt.Println("error occured", err)

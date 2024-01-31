@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
-	"github.com/xnpltn/codegram/internal/models"
-	"github.com/xnpltn/codegram/internal/utils"
+	"os"
 	"github.com/gorilla/mux"
 	"github.com/xnpltn/codegram/internal/database"
+	"github.com/xnpltn/codegram/internal/models"
+	"github.com/xnpltn/codegram/internal/utils"
 )
 
 type Post struct{}
@@ -71,7 +73,19 @@ func (p *Post) DeletePostByID(w http.ResponseWriter, r *http.Request, user model
 	if err != nil {
 		log.Fatal("error", err)
 	}
-	utils.RespondWithJson(w, 204, post)
+	if len(post) < 1{
+		utils.RespondWithError(w, 404, "post already deleted")
+	}else{
+		fmt.Println(post[0].ImageURL)
+		err := os.Remove(post[0].ImageURL[1:])
+		if err != nil{
+			log.Fatal("error ", err)
+		}else{
+			fmt.Println("file removed successfully")
+		}
+		utils.RespondWithJson(w, 204, post)
+	}
+	
 }
 
 func (p *Post) EditPostByID(w http.ResponseWriter, r *http.Request, user models.DBUser){
