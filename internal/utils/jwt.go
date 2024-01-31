@@ -19,7 +19,7 @@ func GenerateJWT(username models.DBUser) (string, error) {
 		"name": username.Name,
 		"username": username.Usename,
 		"iat": time.Now().Unix(),
-		"exp": time.Now().Add(time.Minute * 2).Unix(),
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
 	})
 	secret := []byte("3729c8d0d8682548d4c918d0655a950caeadad4d391b7f319d5a839231f92231")
 

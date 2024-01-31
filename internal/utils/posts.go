@@ -12,7 +12,7 @@ import (
 
 
 
-func CreatePost(_ http.ResponseWriter, r *http.Request, db *sql.DB, user models.DBUser) (models.DBPost, error){
+func CreatePost(r *http.Request, db *sql.DB, user models.DBUser) (models.DBPost, error){
 	r.ParseMultipartForm(20 * 1024 * 1024)
 	sqlStatement := `
 		INSERT INTO posts (user_id, image_url, description)
@@ -47,7 +47,7 @@ func CreatePost(_ http.ResponseWriter, r *http.Request, db *sql.DB, user models.
 	post := models.DBPost{}
 	imageUrl := tempfile.Name()
 
-	err = db.QueryRow(sqlStatement, user.ID, imageUrl, imageDescription).Scan(&post.ID, &post.UserID, &post.ImageURL, &post.Description)
+	err = db.QueryRow(sqlStatement, user.ID, "/"+imageUrl, imageDescription).Scan(&post.ID, &post.UserID, &post.ImageURL, &post.Description)
 	
 	if err != nil{
 		log.Fatal("error", err)
@@ -104,6 +104,62 @@ func DeletePost(db *sql.DB, id string, user *models.DBUser) ([]models.DBPost, er
 		log.Fatal("error", err)
 	}
 
+	return items, nil
+}
+
+func EditPostByID(db *sql.DB, id string, user *models.DBUser, r *http.Request) ([]models.DBPost, error){
+	posts, err := GetPost(db, id)
+	if err != nil {
+		fmt.Println("failed to get post")
+	}
+	items := []models.DBPost{}
+	for _, post := range posts{
+		if post.UserID == user.ID{
+				updateSQL := `
+				UPDATE posts
+				SET image_url = $1, description = $2
+				WHERE id = $3
+			`
+			r.ParseMultipartForm(20 * 1024 * 1024)
+			file, _, err := r.FormFile("image")
+			
+			if err != nil{
+				fmt.Println("error occured", err)
+			}
+			defer file.Close()
+
+			imageDescription := r.FormValue("description")
+			tempfile, err := os.CreateTemp("uploads/"+ user.Usename +"/", "uplaod-*.jpg")
+			if err != nil{
+				fmt.Println("error occured", err)
+			}
+			fileBytes, err := io.ReadAll(file)
+			if err != nil{
+				fmt.Println("error occured", err)
+			}
+			if err != nil{
+				fmt.Println("error occured", err)
+			}
+			tempfile.Write(fileBytes)
+			imageUrl := tempfile.Name()
+			_, err = db.Exec(updateSQL, "/"+ imageUrl, imageDescription, post.ID)
+
+			if err != nil{
+				fmt.Println("error occured", err)
+			}
+
+			posts, err := GetPost(db, id)
+
+			if err != nil{
+				fmt.Println("error occured", err)
+			}
+
+			items = append(items, posts...)
+		}else{
+			items = append(items, models.DBPost{})
+		}
+
+	}
 	return items, nil
 }
 

@@ -11,29 +11,28 @@ import (
 
 func NewRouter() *mux.Router{
 	mux := mux.NewRouter()
-	mux.HandleFunc("/", testHomeHandler)
-	v1Router := mux.PathPrefix("/v1").Subrouter()
-	v1Router.HandleFunc("", v1Handler)
+	// images
+	mux.PathPrefix("/uploads/").Handler(http.StripPrefix("/uploads", http.FileServer(http.Dir("uploads/"))))
 
+	// v1
+	v1Router := mux.PathPrefix("/v1").Subrouter()
+
+	// users, auth
 	user := handlers.NewUser()
 	v1Router.HandleFunc("/auth", handlers.AuthHandler)
 	v1Router.HandleFunc("/auth/signup", user.HandlerCreateUser).Methods("POST")
 	v1Router.HandleFunc("/auth/login", user.HandlerLoginUser).Methods("POST")
 
+	// posts
 	post := handlers.NewPost()
 	v1Router.HandleFunc("/posts", middleware.AuthMiddleware(post.CreatePosts)).Methods("POST")
 	v1Router.HandleFunc("/posts", post.GetPosts).Methods("GET")
 	v1Router.HandleFunc("/posts/{postID}", post.GetPostByID).Methods("GET")
 	v1Router.HandleFunc("/posts/{postID}", middleware.AuthMiddleware(post.DeletePostByID)).Methods("DELETE")
+	v1Router.HandleFunc("/posts/{postID}", middleware.AuthMiddleware(post.EditPostByID)).Methods("PUT")
 
 	return mux
 }
 
 
-func testHomeHandler(w http.ResponseWriter, _ *http.Request){
-	w.Write([]byte("It works"))
-}
 
-func v1Handler(w http.ResponseWriter, _ *http.Request){
-	w.Write([]byte("It works on v1"))
-}
