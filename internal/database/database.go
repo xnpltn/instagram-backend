@@ -26,6 +26,12 @@ func Connect() (*sql.DB, error){
             image_url VARCHAR(255) NOT NULL,
             description TEXT
         );
+
+		CREATE TABLE IF NOT EXISTS followers (
+			follower_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+			following_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+			PRIMARY KEY (follower_id, following_id)
+		);
 		`,
 	)
 

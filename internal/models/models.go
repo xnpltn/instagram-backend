@@ -16,3 +16,8 @@ type DBPost struct{
 	ImageURL string `json:"image_url"`
 	Description string `json:"description"`
 } 
+
+type DBFollow struct{
+	FollowerID uuid.UUID
+	FollowingID uuid.UUID
+}
