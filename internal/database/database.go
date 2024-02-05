@@ -32,6 +32,13 @@ func Connect() (*sql.DB, error){
 			following_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 			PRIMARY KEY (follower_id, following_id)
 		);
+
+		CREATE TABLE IF NOT EXISTS likes (
+			post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+			user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (post_id, user_id)
+		);
 		`,
 	)
 

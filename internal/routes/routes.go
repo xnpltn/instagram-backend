@@ -38,6 +38,12 @@ func NewRouter() *mux.Router{
 	v1Router.HandleFunc("/posts/{postID}", middleware.AuthMiddleware(post.DeletePostByID)).Methods("DELETE")
 	v1Router.HandleFunc("/posts/{postID}", middleware.AuthMiddleware(post.EditPostByID)).Methods("PUT")
 
+	// likes
+	like := handlers.NewLike()
+	v1Router.HandleFunc("/like/{postID}", middleware.AuthMiddleware(like.LikePostByID)).Methods("POST")
+	v1Router.HandleFunc("/unlike/{postID}", middleware.AuthMiddleware(like.UnikePostByID)).Methods("POST")
+	v1Router.HandleFunc("/likes/{postID}", like.GetLikesCountByID).Methods("GET")
+
 	return mux
 }
 

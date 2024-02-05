@@ -21,3 +21,8 @@ type DBFollow struct{
 	FollowerID uuid.UUID
 	FollowingID uuid.UUID
 }
+
+type DBLike struct{
+	PostID uuid.UUID
+	UserID uuid.UUID
+}
