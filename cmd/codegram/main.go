@@ -33,6 +33,6 @@ func main(){
 	
 	err =server.ListenAndServe()
 	if err != nil {
-		log.Fatal("error starting the server")
+		log.Fatal("error starting the server", err)
 	}
 }

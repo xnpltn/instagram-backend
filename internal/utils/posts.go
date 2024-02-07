@@ -138,9 +138,6 @@ func EditPostByID(db *sql.DB, id string, user *models.DBUser, r *http.Request) (
 			if err != nil{
 				fmt.Println("error occured", err)
 			}
-			if err != nil{
-				fmt.Println("error occured", err)
-			}
 			tempfile.Write(fileBytes)
 			imageUrl := tempfile.Name()
 			_, err = db.Exec(updateSQL, "/"+ imageUrl, imageDescription, post.ID)
