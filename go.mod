@@ -1,4 +1,4 @@
-module github.com/xnpltn/codegram
+module github.com/xnpltn/instagram-backend
 
 go 1.21.5
 

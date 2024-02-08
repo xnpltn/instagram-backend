@@ -3,7 +3,7 @@ package utils
 import (
 	"database/sql"
 	"log"
-	"github.com/xnpltn/codegram/internal/models"
+	"github.com/xnpltn/instagram-backend/internal/models"
 )
 
 func FollowUserByID(db *sql.DB, user models.DBUser, id string) (models.DBFollow, error){

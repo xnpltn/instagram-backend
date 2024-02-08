@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 	"github.com/gorilla/mux"
-	"github.com/xnpltn/codegram/internal/database"
-	"github.com/xnpltn/codegram/internal/utils"
+	"github.com/xnpltn/instagram-backend/internal/database"
+	"github.com/xnpltn/instagram-backend/internal/utils"
 )
 
 

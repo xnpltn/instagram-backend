@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"github.com/xnpltn/codegram/internal/routes"
+	"github.com/xnpltn/instagram-backend/internal/routes"
 	_ "github.com/lib/pq"
 	"github.com/gorilla/handlers"
-	"github.com/xnpltn/codegram/internal/database"
+	"github.com/xnpltn/instagram-backend/internal/database"
 )
 
 

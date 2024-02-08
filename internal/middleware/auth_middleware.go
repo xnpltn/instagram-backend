@@ -3,8 +3,8 @@ package middleware
 import (
 	"fmt"
 	"net/http"
-	"github.com/xnpltn/codegram/internal/models"
-	"github.com/xnpltn/codegram/internal/utils"
+	"github.com/xnpltn/instagram-backend/internal/models"
+	"github.com/xnpltn/instagram-backend/internal/utils"
 )
 
 type authHandler func(http.ResponseWriter, *http.Request, models.DBUser)

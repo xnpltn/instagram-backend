@@ -4,8 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-
-	"github.com/xnpltn/codegram/internal/models"
+	"github.com/xnpltn/instagram-backend/internal/models"
 )
 
 func LikePost(db *sql.DB, user models.DBUser, id string) (models.DBLike, error){

@@ -10,7 +10,7 @@ import (
 	"time"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
-	"github.com/xnpltn/codegram/internal/models"
+	"github.com/xnpltn/instagram-backend/internal/models"
 )
 
 func GenerateJWT(username models.DBUser) (string, error) {

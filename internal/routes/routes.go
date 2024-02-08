@@ -3,8 +3,8 @@ package routes
 import (
 	"net/http"
 	"github.com/gorilla/mux"
-	"github.com/xnpltn/codegram/internal/handlers"
-	"github.com/xnpltn/codegram/internal/middleware"
+	"github.com/xnpltn/instagram-backend/internal/handlers"
+	"github.com/xnpltn/instagram-backend/internal/middleware"
 )
 
 
