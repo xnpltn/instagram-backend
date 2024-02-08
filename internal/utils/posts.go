@@ -32,7 +32,7 @@ func CreatePost(r *http.Request, db *sql.DB, user models.DBUser) (models.DBPost,
 		fmt.Println("folder exists")
 	}
 	
-	tempfile, err := os.CreateTemp("uploads/"+ user.Usename +"/", "uplaod-*.jpg")
+	tempfile, err := os.CreateTemp("uploads/"+ user.Usename +"/", "upload-"+user.Usename+"-*.jpg")
 	if err != nil{
 		fmt.Println("error occured", err)
 	}
@@ -130,7 +130,7 @@ func EditPostByID(db *sql.DB, id string, user *models.DBUser, r *http.Request) (
 			defer file.Close()
 
 			imageDescription := r.FormValue("description")
-			tempfile, err := os.CreateTemp("uploads/"+ user.Usename +"/", "uplaod-*.jpg")
+			tempfile, err := os.CreateTemp("uploads/"+ user.Usename +"/", "upload-"+user.Usename+"-*.jpg")
 			if err != nil{
 				fmt.Println("error occured", err)
 			}

@@ -1,4 +1,4 @@
 run:
-	go build -o bin/api cmd/codegram/main.go && ./bin/api
+	go build -o bin/api cmd/main.go && ./bin/api
 fmt:
 	go fmt *.go

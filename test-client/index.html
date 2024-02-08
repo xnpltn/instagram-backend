@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <main>
+        <form id="form">
+            <input type="file" name="image" id="image">
+            <input type="text" name="description" id="description">
+            <input type="submit" value="submit it">
+        </form>
+
+        <div>
+            <ul id="data"></ul>
+        </div>
+
+        <img id="myimage"/>
+    </main>
+
+    <script>
+        const BASE_URL = "http://localhost:9090"
+        let form = document.getElementById("form")
+        let data = document.getElementById("data")
+        let image = document.getElementById("myimage")
+        form.addEventListener("submit", submitForm)
+        async function submitForm(event){
+            event.preventDefault();
+            const formData = new FormData(form)
+            const headers = new Headers({
+                'Authorization': `Token ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmxlSEFpT2pFM01EWTNPREkwTlRBc0ltbGhkQ0k2TVRjd05qWTVOakExTUN3aWFXUWlPaUl5TURWa01UZzFOeTB6WmpCa0xUUTNPRGN0T1RNMlpDMHhOMlkxWWpnME1UVXhZV1FpTENKdVlXMWxJam9pZEdWemRDSXNJblZ6WlhKdVlXMWxJam9pZEdWemRDSjkuY24wR1JydmRUajNmN2pyZDVOWHVlaWhLRkNJTlZQN0NHZUptWVpVbFNabw==`
+            })
+            const res = await fetch(`${BASE_URL}/v1/posts`, {
+                method: "POST",
+                body: formData,
+                headers: headers
+            })
+
+            const d = await res.json()
+            image.setAttribute("src", `${BASE_URL+d['image_url']}`)
+            for(let key in d){
+                const newItem = document.createElement("li");
+                newItem.innerText = d[key]
+                data.appendChild(newItem)
+            }    
+        }
+    </script>
+</body>
+</html>
