@@ -41,6 +41,7 @@ func UnlikePost(db *sql.DB, user models.DBUser, id string)(models.DBLike, error)
 	err := db.QueryRow(sqlStmt, id, user.ID).Scan(&like.PostID, &like.UserID)
 	if err != nil{
 		log.Println("error Unlike: ", err)
+		return models.DBLike{}, err
 	}
 	return like, nil
 
