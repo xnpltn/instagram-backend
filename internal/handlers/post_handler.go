@@ -104,7 +104,7 @@ func (p *Post) EditPostByID(w http.ResponseWriter, r *http.Request, user models.
 	if post[0].ImageURL == "" && post[0].Description == ""{
 		utils.RespondWithError(w, 400, "Edit your posts")
 	}else{
-		utils.RespondWithJson(w, 201, post)
+		utils.RespondWithJson(w, http.StatusCreated, post)
 	}
 	
 	

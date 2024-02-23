@@ -6,10 +6,11 @@ import (
 )
 
 func Connect() (*sql.DB, error){
-	db, err := sql.Open("postgres", "postgresql://postgres:qwerty@localhost:5432/codegram?sslmode=disable")
+	db, err := sql.Open("postgres", "postgresql://postgres:postgres@localhost:5433/codegram?sslmode=disable")
 	if err != nil{
 		log.Fatal("Error Occured Connectiong to database", err)
 	}
+	
 	_ , err = db.Exec(
 		`
 		CREATE TABLE IF NOT EXISTS users (
@@ -43,7 +44,7 @@ func Connect() (*sql.DB, error){
 	)
 
 	if err != nil{
-		log.Fatal("Error occured creating Tables", err)
+		log.Fatal("Error occured creating Tables: ", err)
 	}
 
 	return db, nil

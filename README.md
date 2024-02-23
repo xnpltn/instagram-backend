@@ -1,6 +1,6 @@
 # Instagram backend
 
-A monolith API for instagram (not official) writen in go.
+A monolith API for INSTAGRAM (not official) writen in go.
 
 stack:
 

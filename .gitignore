@@ -1,3 +1,4 @@
 bin
 logs
 uploads/*
+test-client/

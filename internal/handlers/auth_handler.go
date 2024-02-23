@@ -1,13 +1,17 @@
 package handlers
 
 import (
+	
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
+	"database/sql"
+
+	"github.com/xnpltn/instagram-backend/internal/database"
 	"github.com/xnpltn/instagram-backend/internal/models"
 	"github.com/xnpltn/instagram-backend/internal/utils"
-	"github.com/xnpltn/instagram-backend/internal/database"
 )
 
 func AuthHandler(w http.ResponseWriter, _ *http.Request){
@@ -35,13 +39,15 @@ func(u *User) HandlerCreateUser(w http.ResponseWriter, r *http.Request){
 	params := models.CreateUserParams{}
 	error := decoder.Decode(&params)
 	if error != nil {
-		utils.RespondWithError(w, 400, fmt.Sprintf("Error Persing JSON: %v", error))
+		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error Persing JSON: %v", error))
 		return
 	}
 	db, err := database.Connect()
 	errDB := db.QueryRow(ceStmt, params.Usename).Scan(&dbUser.Usename,)
 	if errDB != nil{
-		log.Print("error", errDB)
+		if !errors.Is(err, sql.ErrNoRows){
+			log.Print("error: ", errDB)
+		}
 	}
 	
 	if err != nil {
@@ -109,9 +115,18 @@ func(u *User) HandlerLoginUser(w http.ResponseWriter, r *http.Request,){
 		if err != nil{
 			log.Fatal("error occured", err)
 		}
-	
-		utils.RespondWithJson(w, 200, map[string]string{
-			"Token" : tokenSting,
-		})
+
+		cookie := &http.Cookie{
+			Name:  "Token",
+			Value: tokenSting,
+			Path:  "/",
+			MaxAge: 36000, 
+			HttpOnly: true,
+			Secure: true, 
+			SameSite: http.SameSiteLaxMode,
+		}
+		
+		http.SetCookie(w, cookie)
+		utils.RespondWithJson(w, http.StatusOK, "login successfully")
 	}	
 }

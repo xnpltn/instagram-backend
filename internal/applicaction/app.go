@@ -1,0 +1,49 @@
+package applicaction
+
+import (
+	"database/sql"
+	"net/http"
+
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
+	"github.com/xnpltn/instagram-backend/internal/database"
+)
+
+
+type App struct{
+	DB *sql.DB
+	Router *mux.Router
+}
+
+  
+
+func NewApp( router *mux.Router) *App{
+	return &App{
+		Router: router,
+	}
+}
+
+func(a *App)Start()error{
+	db, err := database.Connect()
+	if err!= nil{
+		return err
+	}
+	a.DB = db
+	headersOk := handlers.AllowedHeaders([]string{"Content-Type", "Authorization"})
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"})
+	s := &http.Server{
+		Handler: handlers.CORS(originsOk, headersOk, methodsOk)(a.Router),
+		Addr: ":8080",
+	}
+	
+	return s.ListenAndServe()
+}
+
+
+func (a *App)LoadRoutes(){
+	a.LoadAuthRoutes()
+	a.LoadFollowRoutes()
+	a.LoadLikeRoutes()
+	a.LoadPostsRoutes()
+}
