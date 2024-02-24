@@ -20,7 +20,13 @@ func SetupAPI(t *testing.T)(string, func()){
 func TestAPIReadiness(t *testing.T){
 	url, close := SetupAPI(t)
 	defer close()
-	expectedOutput := "API ready\n"
+	expectedOutput :=struct{
+		Body string
+		Code int
+	}{
+		Body: "API ready\n",
+		Code: 200,
+	}
 
 	resp, err := http.Get(url +"/v1/")
 	if err!= nil{
@@ -30,7 +36,10 @@ func TestAPIReadiness(t *testing.T){
 	if err!= nil{
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(body), expectedOutput){
-		t.Fatalf("expected: %q got %q instead", expectedOutput, string(body))
+	if resp.StatusCode != expectedOutput.Code{
+		t.Errorf("expected: %q got %q instead", expectedOutput.Code, resp.StatusCode)
+	}
+	if !strings.Contains(string(body), expectedOutput.Body){
+		t.Fatalf("expected: %q got %q instead", expectedOutput.Body, string(body))
 	}
 }

@@ -6,6 +6,8 @@ import (
 	"log"
 )
 
+
+
 func GetUserByID(db *sql.DB, id string) ([]models.DBUser, error) {
 	stmt, err := db.Prepare("SELECT id, name, username FROM users WHERE id=$1")
 	if err != nil {
@@ -39,3 +41,6 @@ func getUsersFromDB(rows *sql.Rows) ([]models.DBUser, error) {
 
 	return items, nil
 }
+
+
+
